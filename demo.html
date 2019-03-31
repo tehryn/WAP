@@ -1,0 +1,37 @@
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script src="./multiimage.js"></script>
+    <link rel="stylesheet" href="multiimage.css">
+    </head>
+    <body onload="multiimage();">
+        <h1> Demonstrační dokument </h1>
+        <p>
+            Mějme na stránce prvek span class="multiimage", který obsahuje sadu obrázků.
+            Každý obrázek je reprezentován odkazem (prvek a) na plnou velikost obrázku.
+            Uvnitř každého odkazu je prvek img, který reprezentuje náhled (zmenšeninu) obrázku.
+            Vytvořte skript, který nalezne prvky multiimage v dokumentu,
+            místo každého z nich zobrazí pouze náhled prvního obrázku v sadě a vhodně graficky naznačí,
+            že je k dispozici více obrázků. Po najetí myší na tento obrázek se kolem něj zobrazí
+            náhledy ostatních obrázků rozmístěné do vrcholů n-úhelníku.
+            Náhledy se opět skryjí po určité době nečinnosti.
+            Po kliknutí na kterýkoliv náhled se cílový obrázek
+            zobrazí na celou stránku (překryje obsah stránky) a u něj se zobrazí ikona pro uzavření obrázku.
+        </p>
+        <div class="multiimage">
+            <a href="img/1.JPG"><img src="img/1.JPG"></a>
+            <a href="img/2.JPG"><img src="img/2.JPG" ></a>
+            <a href="img/3.JPG"><img src="img/3.JPG" ></a>
+            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
+            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
+            <a href="img/7.JPG"><img src="img/7.JPG" ></a>
+        </div>
+
+        <div class="multiimage">
+            <a href="img/1.JPG"><img src="img/6.JPG" ></a>
+            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+            <a href="img/6.JPG"><img src="img/4.JPG" ></a>
+        </div>
+    </body>
+</html>
