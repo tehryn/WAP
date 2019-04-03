@@ -11,6 +11,8 @@ var modalClose  = undefined;
 var modalImg    = undefined;
 var modalAlt    = undefined;
 
+var closeTimer = { 'timeout' : 0, 'idx' : 0 };
+
 class ImgCollection {
     constructor( elem, idx ) {
         let hrefs = elem.getElementsByTagName( 'a' );
@@ -66,20 +68,30 @@ class ImgCollection {
         }
     }
 
-    disapear() {
+    close( force ) {
+        if ( this.visible && !force ) {
+            return 350;
+        }
+
         let images = this.preview.getElementsByTagName( 'div' );
         this.visible = false;
         for ( let i = 1; i < images.length; i++ ) {
             images[ i ].style.opacity = 0;
+            //images[ i ].style.top  = '0px';
+            //images[ i ].style.left = '0px';
             moveElement( images[ i ], 0, 0, 0, 0 );
         }
         if ( this.width && this.height  ) {
             images[ 0 ].style.position = 'relative';
+            //images[ 0 ].style.top  = '0px';
+            //images[ 0 ].style.left = '0px';
             images[ 0 ].style.width  = this.width + 'px';
             images[ 0 ].style.height = this.height + 'px';
             images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
         }
         moveElement( images[ 0 ], 0, 0, 0, 0 );
+        this.lower();
+        return 0;
     }
 
     apear( all ) {
@@ -98,95 +110,142 @@ class ImgCollection {
     }
 
     hover() {
-        function commonMove( collection, images ) {
+        function moveChilds( collection, images ) {
+            function polygon() {
+                let bottom = hspace + ( collection.height + spacing * ( steps - 1 )  ) * steps;
+                let right  = vspace - spacing;
+                // posune obrazky nahoru
+                for ( let i = 0; i < y && idx < images.length; i++ ) {
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                    right -= collection.width + spacing;
+                }
+                // posune obrazku dolu
+                bottom = -bottom - 2 * spacing;
+                right  = vspace - spacing;
+                for ( let i = 0; i < y && idx < images.length; i++ ) {
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                    right -= collection.width + spacing;
+                }
+                // posun vlevo
+                bottom = hspace - 5;
+                right  = vspace + ( collection.width + spacing * ( steps - 1 ) ) * steps;
+                for ( let i = 0; i < y && idx < images.length; i++ ) {
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                    bottom -= collection.height + spacing;
+                }
+                // posun vpravo
+                bottom = hspace - spacing;
+                right  = -right - 2*spacing;
+                for ( let i = 0; i < y && idx < images.length; i++ ) {
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                    bottom -= collection.height + spacing;
+                }
+
+                let cnt = 0;
+                right  = -vspace - ( collection.width + spacing * ( steps - 1 ) ) * steps;
+                bottom = -hspace - ( collection.height + spacing * ( steps - 1 ) ) * steps;
+                while ( cnt < 4 && idx < images.length ) {
+                    if ( cnt == 0 ) {
+                        if ( inPage( images[ idx ], 0, right - 2*spacing, -bottom, 0 ) ) {
+                            moveElement( images[ idx++ ], 0, right - 2*spacing, -bottom, 0 );
+                        }
+                    }
+                    else if ( cnt == 1 ) {
+                        if ( inPage( images[ idx ], 0, right - 2*spacing, bottom - 2*spacing, 0 ) ) {
+                            moveElement( images[ idx++ ], 0, right - 2*spacing, bottom - 2*spacing, 0 );
+                        }
+                    }
+                    else if ( cnt == 2 ) {
+                        if ( inPage( images[ idx ], 0, -right, bottom - 2 * spacing, 0  ) ) {
+                            moveElement( images[ idx++ ], 0, -right, bottom - 2 * spacing, 0 );
+                        }
+                    }
+                    else {
+                        if ( inPage( images[ idx ], 0, -right, -bottom, 0 ) ) {
+                            moveElement( images[ idx++ ], 0, -right, -bottom, 0 );
+                        }
+                    }
+                    cnt++;
+                }
+            }
+
+            function table( count ) {
+                let bottom = count * ( spacing + collection.height );
+                let right  = count * ( spacing + collection.width );
+                let n      = count * 2 + 1;
+
+                for (let i = 0; idx < images.length && i < n; i++) {
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                    right -= spacing + collection.width;
+                }
+                right += spacing + collection.width;
+                for ( let i = 1; idx < images.length && i < n; i++ ) {
+                    bottom -= collection.height + spacing;
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                }
+
+                for (let i = 1; idx < images.length && i < n; i++) {
+                    right += spacing + collection.width;
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                }
+
+                for ( let i = 2; idx < images.length && i < n; i++ ) {
+                    bottom += collection.height + spacing;
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                }
+
+                if ( idx < images.length ) {
+                    table( count + 1 );
+                }
+            }
+
             let x      = images.length - 1;
             // let circle = x % 4 == 0 ? x : x + 4 - ( x % 4 );
             let circle = x % 4 == 0 ? x - 4 : x - x % 4;
             let y      = circle / 4;
             let space  = ( y - 1 ) / 2;
-            let hspace = ( collection.height + 5 ) * space;
-            let vspace = ( collection.width + 5 ) * space;
-            let bottom = hspace + collection.height;
-            let right  = vspace - 5;
-            let idx = 1;
-            // posune obrazky nahoru
             let spacing = 5;
-            for ( let i = 0; i < y; i++ ) {
-                if ( moveElement( images[ idx ], 0, right, bottom, 0 ) ) {
-                    idx++;
+            let hspace = ( collection.height + spacing ) * space;
+            let vspace = ( collection.width + spacing ) * space;
+            let steps = 1;
+            let idx = 1;
+            if ( inPage( images[ 0 ], 0, vspace + collection.width, hspace + collection.height, 0 ) ) {
+                while ( steps <= 5 && idx < images.length ) {
+                    polygon();
+                    steps += 1;
                 }
-                right -= collection.width + spacing;
+                images[ 0 ].style.position = 'relative';
+                images[ 0 ].style.width  = collection.width + 2*vspace + 'px';
+                images[ 0 ].style.height = collection.height + 2*hspace + 'px';
+                images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
+                moveElement( images[ 0 ], 0, vspace -spacing , hspace - spacing, 0 );
             }
-            // posune obrazku dolu
-            bottom = -bottom - 10;
-            right  = vspace - 5;
-            for ( let i = 0; i < y; i++ ) {
-                if ( moveElement( images[ idx ], 0, right, bottom, 0 ) ) {
-                    idx++;
-                }
-                right -= collection.width + spacing;
+            else {
+                //circle = Math.ceil( Math.sqrt( images.length ) );
+                table(1);
             }
-            // posun vlevo
-            bottom = hspace - 5;
-            right  = collection.width + vspace;
-            for ( let i = 0; i < y; i++ ) {
-                if ( moveElement( images[ idx ], 0, right, bottom, 0 ) ) {
-                    idx++;
-                }
-                bottom -= collection.height + spacing;
-            }
-            // posun vpravo
-            bottom = hspace - 5;
-            right  = -right - 10;
-            for ( let i = 0; i < y; i++ ) {
-                if ( moveElement( images[ idx ], 0, right, bottom, 0 ) ) {
-                    idx++;
-                }
-                bottom -= collection.height + spacing;
-            }
-
-            let cnt = 0;
-            console.log( collection );
-            right  = -vspace - collection.width;
-            bottom = -hspace - collection.height;
-            while ( cnt < 4 && idx < images.length ) {
-                console.log( cnt );
-                if ( cnt == 0 ) {
-                    if ( moveElement( images[ idx ], 0, right - 10, -bottom, 0 ) ) {
-                        console.log( [ right, bottom ] );
-                        idx++;
-                    }
-                }
-                else if ( cnt == 1 ) {
-                    if ( moveElement( images[ idx ], 0, right - 10, bottom - 10, 0 ) ) {
-                        idx++;
-                    }
-                }
-                else if ( cnt == 2 ) {
-                    if ( moveElement( images[ idx ], 0, -right, bottom - 10 , 0 ) ) {
-                        idx++;
-                    }
-                }
-                else {
-                    if ( moveElement( images[ idx ], 0, -right, -bottom, 0 ) ) {
-                        idx++;
-                    }
-                }
-                cnt++;
-            }
-
-            images[ 0 ].style.width  = collection.width + 2*vspace + 'px';
-            images[ 0 ].style.height = collection.height + 2*hspace + 'px';
-            images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
-            images[ 0 ].style.position = 'relative';
-            moveElement( images[ 0 ], 0, vspace -5 , hspace -5, 0 );
         }
 
         if ( this.visible ) {
             return;
         }
         this.visible = true;
-        console.log( this );
         if ( this.width == 0 || this.height == 0 ) {
             this.width  = this.images[ 0 ].preview.offsetWidth;
             this.height = this.images[ 0 ].preview.offsetHeight;
@@ -196,7 +255,7 @@ class ImgCollection {
         for ( let i = 1; i < images.length; i++ ) {
             images[ i ].style.opacity = 1;
         }
-        commonMove( this, images );
+        moveChilds( this, images );
     }
 }
 
@@ -255,19 +314,41 @@ function addModal() {
 }
 
 function imgHover( id ) {
-    for ( let i = 0; i < collections.length; i++ ) {
-        if ( id != i ) {
-            collections[ i ].disapear();
-            collections[ i ].lower();
+    function close( id, idx ) {
+        if ( collections[ id ].mouseIsOver === -1 ) {
+            if ( collections[ idx ].visible ) {
+                collections[ idx ].close( true );
+            }
+            collections[ id ].hover();
         }
     }
-    collections[ id ].hover();
+    let delay = 0;
+    let i = undefined;
+    for ( i = 0; i < collections.length; i++ ) {
+        if ( id != i ) {
+            if ( collections[ i ].visible ) {
+                delay = collections[ i ].close();
+                if ( delay > 0 ) {
+                    break;
+                }
+            }
+        }
+    }
+    if ( delay >  0 ) {
+        closeTimer.timeout = setTimeout( close, delay, id, i );
+        closeTimer.id = i;
+    }
+    else {
+        collections[ id ].hover();
+    }
 }
 
 function hideAllImages( expect ) {
     for ( let i = 0; i < collections.length; i++ ) {
-        collections[ i ].disapear();
-        collections[ i ].lower();
+        if ( collections[ i ].visible ) {
+            collections[ i ].close();
+        }
+        //collections[ i ].lower();
     }
 }
 
@@ -275,7 +356,9 @@ function imgLeave( id, timeout ) {
     function leave() {
         let diff = collections[ id ].mouseIsOver - Date.now();
         if ( collections[ id ].mouseIsOver >= 0 && diff < 0 ) {
-            let images = collections[ id ].disapear();
+            if ( collections[ id ].visible ) {
+                let images = collections[ id ].close( true );
+            }
         }
         else if ( diff >= 0 ) {
             imgLeave( id, diff );
@@ -285,7 +368,7 @@ function imgLeave( id, timeout ) {
         }
     }
     if ( !timeout ) {
-        timeout = 2500;
+        timeout = 1000;
     }
     setTimeout( leave, timeout );
 }
@@ -295,13 +378,15 @@ function mouseLeft( id ) {
 }
 
 function mouseIsOver( id ) {
+    if ( id === closeTimer.id ) {
+        clearTimeout( closeTimer.timeout );
+    }
     collections[ id ].mouseIsOver = -1;
 }
 
 function idle() {
     function isNotIdle() {
         clearTimeout( time  );
-        console.log( 'timeout is reset' );
         time = setTimeout( hideAllImages, 3000 );
     }
     let time = undefined;
@@ -310,14 +395,17 @@ function idle() {
 }
 
 function moveElement( elem, top, right, bottom, left ) {
-    let borders  = elem.getBoundingClientRect();
     let diffTop  = top - bottom;
     let diffLeft = left - right;
-
-    if ( diffTop*(-1) >= borders.top || diffLeft * (-1) >= borders.left ) {
-        return false;
-    }
     elem.style.top = diffTop + 'px';
     elem.style.left = (left - right) + 'px';
     return true;
+}
+
+function inPage( elem, top, right, bottom, left ) {
+    let borders  = elem.getBoundingClientRect();
+    let diffTop  = top - bottom;
+    let diffLeft = left - right;
+    let expr = diffTop*(-1) < borders.top + window.scrollY && diffLeft * (-1) < borders.left + window.scrollX;
+    return expr;
 }
