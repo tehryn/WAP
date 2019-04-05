@@ -1,78 +1,142 @@
 <html>
     <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="author" content="Jiří Matějka (xmatej52)">
     <script src="./multiimage.js">multiimage();</script>
     <script>multiimage();</script>
     <link rel="stylesheet" href="multiimage.css">
     </head>
     <body>
         <h1> Demonstrační dokument </h1>
-        <p>
-            Mějme na stránce prvek span class="multiimage", který obsahuje sadu obrázků.
-            Každý obrázek je reprezentován odkazem (prvek a) na plnou velikost obrázku.
-            Uvnitř každého odkazu je prvek img, který reprezentuje náhled (zmenšeninu) obrázku.
-            Vytvořte skript, který nalezne prvky multiimage v dokumentu,
-            místo každého z nich zobrazí pouze náhled prvního obrázku v sadě a vhodně graficky naznačí,
-            že je k dispozici více obrázků. Po najetí myší na tento obrázek se kolem něj zobrazí
-            náhledy ostatních obrázků rozmístěné do vrcholů n-úhelníku.
-            Náhledy se opět skryjí po určité době nečinnosti.
-            Po kliknutí na kterýkoliv náhled se cílový obrázek
-            zobrazí na celou stránku (překryje obsah stránky) a u něj se zobrazí ikona pro uzavření obrázku.
-        </p>
-        <div class="multiimage">
-            <a href="img/1.JPG"><img src="img/1.JPG"></a>
-            <a href="img/2.JPG"><img src="img/2.JPG" ></a>
-            <a href="img/3.JPG"><img src="img/3.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-            <a href="img/7.JPG"><img src="img/7.JPG" ></a>
-            <a href="img/7.JPG"><img src="img/7.JPG" ></a>
-            <a href="img/7.JPG"><img src="img/7.JPG" ></a>
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <div class="multiimage">
-            <a href="img/2.JPG"><img src="img/2.JPG" ></a>
-            <a href="img/1.JPG"><img src="img/1.JPG"></a>
-            <a href="img/3.JPG"><img src="img/3.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-            <a href="img/7.JPG"><img src="img/7.JPG" ></a>
-            <a href="img/1.JPG"><img src="img/1.JPG"></a>
-            <a href="img/2.JPG"><img src="img/2.JPG" ></a>
-            <a href="img/3.JPG"><img src="img/3.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-            <a href="img/7.JPG"><img src="img/7.JPG" ></a>
-            <a href="img/1.JPG"><img src="img/1.JPG"></a>
-            <a href="img/2.JPG"><img src="img/2.JPG" ></a>
-            <a href="img/3.JPG"><img src="img/3.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-            <a href="img/1.JPG"><img src="img/1.JPG"></a>
-            <a href="img/2.JPG"><img src="img/2.JPG" ></a>
-            <a href="img/3.JPG"><img src="img/3.JPG" ></a>
-            <a href="img/4.JPG"><img src="img/4.JPG" ></a>
-            <a href="img/5.JPG"><img src="img/5.JPG" ></a>
-            <a href="img/6.JPG"><img src="img/6.JPG" ></a>
-        </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
+        <h2>Zadání</h2>
+            <p>
+                Mějme na stránce prvek span class="multiimage", který obsahuje sadu obrázků.
+                Každý obrázek je reprezentován odkazem (prvek a) na plnou velikost obrázku.
+                Uvnitř každého odkazu je prvek img, který reprezentuje náhled (zmenšeninu) obrázku.
+                Vytvořte skript, který nalezne prvky multiimage v dokumentu,
+                místo každého z nich zobrazí pouze náhled prvního obrázku v sadě a vhodně graficky naznačí,
+                že je k dispozici více obrázků. Po najetí myší na tento obrázek se kolem něj zobrazí
+                náhledy ostatních obrázků rozmístěné do vrcholů n-úhelníku.
+                Náhledy se opět skryjí po určité době nečinnosti.
+                Po kliknutí na kterýkoliv náhled se cílový obrázek
+                zobrazí na celou stránku (překryje obsah stránky) a u něj se zobrazí ikona pro uzavření obrázku.
+            </p>
+        <h2>Implementace</h2>
+            <p>
+                Prvky multiimage lze na stránce poznat bílým číslem v levém horním rohu, které udává počet obrázků v kolekci.
+                V případě, že se kolekce obrázků vejde na stránku, po najetí myší na sadu obrázků se náhledy obrázků zobrazí
+                okolo aktuálního náhledu. Pokud je obrázků v sadě více jak 9, první obrázek v sadě se roztáhne, aby
+                vyplnil nevyužité místo uvnitř vzniklého n-úhelníku. Náhledy vyplňují prostor okolo prvního obrázku v kolekci v
+                následujícím pořadí: horní okraj, pravý okraj, dolní okraj, levý okraj, pravý horní roh, pravý dolní roh,
+                levý dolní roh, levý horní roh. Stěny okolo obrázku jsou vyplněny vždy, ale ne každý roh musí být vyplněn.
+                Aby byly rohy také vyplněny, musí být počet obrázků - 1 dělitelné čtyřmi.
+            </p>
+            <div class="multiimage">
+                <a href="img/3.JPG"><img src="img/3.JPG" ></a>
+                <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+                <a href="img/13.JPG"><img src="img/13.JPG" ></a>
+                <a href="img/7.JPG"><img src="img/7.JPG" ></a>
+                <a href="img/9.JPG"><img src="img/9.JPG" ></a>
+                <a href="img/2.JPG"><img src="img/2.JPG" ></a>
+                <a href="img/4.JPG"><img src="img/4.JPG" ></a>
+                <a href="img/8.JPG"><img src="img/8.JPG" ></a>
+                <a href="img/1.JPG"><img src="img/1.JPG" ></a>
+                <a href="img/10.JPG"><img src="img/10.JPG" ></a>
+                <a href="img/12.JPG"><img src="img/12.JPG" ></a>
+                <a href="img/6.JPG"><img src="img/6.JPG" ></a>
+                <a href="img/11.JPG"><img src="img/11.JPG" ></a>
+            </div>
+            <p>
+                Kolekce se mohou překrývat a v některých případech se může i stát,
+                že v mezeře mezi obrázky v otevřené kolekci je umístěn část náhledu
+                jiné kolekce. Aby takto uživatel omylem neotevřel jinou kolekci,
+                během přejíždění myší po náhledech otevřené kolekce, otevírají se ostatní
+                kolekce se zpožděním 500ms. Pokud jsou všechny kolekce zavřené, zpoždění
+                zde žádné není.
+            </p>
+            <div class="multiimage">
+                <a href="img/8.JPG"><img src="img/8.JPG" ></a>
+                <a href="img/3.JPG"><img src="img/3.JPG" ></a>
+                <a href="img/16.JPG"><img src="img/16.JPG" ></a>
+                <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+                <a href="img/13.JPG"><img src="img/13.JPG" ></a>
+                <a href="img/7.JPG"><img src="img/7.JPG" ></a>
+                <a href="img/9.JPG"><img src="img/9.JPG" ></a>
+                <a href="img/2.JPG"><img src="img/2.JPG" ></a>
+                <a href="img/14.JPG"><img src="img/14.JPG" ></a>
+                <a href="img/4.JPG"><img src="img/4.JPG" ></a>
+                <a href="img/1.JPG"><img src="img/1.JPG" ></a>
+                <a href="img/10.JPG"><img src="img/10.JPG" ></a>
+                <a href="img/15.JPG"><img src="img/15.JPG" ></a>
+                <a href="img/12.JPG"><img src="img/12.JPG" ></a>
+                <a href="img/6.JPG"><img src="img/6.JPG" ></a>
+                <a href="img/11.JPG"><img src="img/11.JPG" ></a>
+            </div>
+            <div class="multiimage">
+                <a href="img/16.JPG"><img src="img/16.JPG" ></a>
+                <a href="img/3.JPG"><img src="img/3.JPG" ></a>
+                <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+                <a href="img/13.JPG"><img src="img/13.JPG" ></a>
+                <a href="img/11.JPG"><img src="img/11.JPG" ></a>
+            </div>
+            <p>
+                Pokud je kolekce příliš velká, nebo je umístěna příliš blízko okraje stránky, aby se zobrazila jako n-úhelník,
+                vykreslí se obrázky do tabulky.
+            </p>
+            <div style="width: 400px">
+                <div class="multiimage">
+                    <a href="img/2.JPG"><img src="img/2.JPG" ></a>
+                    <a href="img/8.JPG"><img src="img/8.JPG" ></a>
+                    <a href="img/3.JPG"><img src="img/3.JPG" ></a>
+                    <a href="img/16.JPG"><img src="img/16.JPG" ></a>
+                    <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+                    <a href="img/13.JPG"><img src="img/13.JPG" ></a>
+                    <a href="img/7.JPG"><img src="img/7.JPG" ></a>
+                    <a href="img/9.JPG"><img src="img/9.JPG" ></a>
+                    <a href="img/14.JPG"><img src="img/14.JPG" ></a>
+                    <a href="img/4.JPG"><img src="img/4.JPG" ></a>
+                    <a href="img/1.JPG"><img src="img/1.JPG" ></a>
+                    <a href="img/10.JPG"><img src="img/10.JPG" ></a>
+                    <a href="img/15.JPG"><img src="img/15.JPG" ></a>
+                    <a href="img/12.JPG"><img src="img/12.JPG" ></a>
+                    <a href="img/6.JPG"><img src="img/6.JPG" ></a>
+                    <a href="img/11.JPG"><img src="img/11.JPG" ></a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <p>
+                V tomto případě se obrázky rekurzivně vykreslují ve směru hodinových ručiček.
+                Nejprve se zobrazí 8 obrázků okolo náhledu kolekce, poté 16 obrázků okolo
+                aktuálně vykreslených osmi obrázků, atd. Obrázky se vykreslují v následujícím
+                pořadí: horní stěna, pravá stěna, dolní stěna, levá stěna. Pokud nelze
+                jednu z těchto "stěn" vykreslit (obrázky by se nacházeli mimo dokument),
+                přeskočí se vykreslení této "stěny" a obrázky budou vykresleny na nejbližší
+                možné pozici.
+            </p>
+            <div style="width: 400px">
+                <div class="multiimage">
+                    <a href="img/7.JPG"><img src="img/7.JPG" ></a>
+                    <a href="img/2.JPG"><img src="img/2.JPG" ></a>
+                    <a href="img/8.JPG"><img src="img/8.JPG" ></a>
+                    <a href="img/3.JPG"><img src="img/3.JPG" ></a>
+                    <a href="img/16.JPG"><img src="img/16.JPG" ></a>
+                    <a href="img/5.JPG"><img src="img/5.JPG" ></a>
+                    <a href="img/13.JPG"><img src="img/13.JPG" ></a>
+                    <a href="img/14.JPG"><img src="img/14.JPG" ></a>
+                    <a href="img/1.JPG"><img src="img/1.JPG" ></a>
+                    <a href="img/6.JPG"><img src="img/6.JPG" ></a>
+                    <a href="img/11.JPG"><img src="img/11.JPG" ></a>
+                </div>
+            </div>
+            <br>
+            <br>
+            <br>
+            <fieldset>
+                <legend>Autor</legend>
+                Jméno: Jiří Matějka
+                <br>
+                Login: xmatej52
+            </fieldset>
     </body>
 </html>

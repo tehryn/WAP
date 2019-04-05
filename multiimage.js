@@ -21,11 +21,12 @@ class ImgCollection {
         this.id = idx;
         this.visible = false;
         for ( let i = 0; i < hrefs.length; i++) {
-            let images = elem.getElementsByTagName( 'img' );
+            let images = hrefs[ i ].getElementsByTagName( 'img' );
             if ( images.length > 0 ) {
                 let fullSize = document.createElement( 'img' );
                 let divImg   = document.createElement( 'div' );
-                divImg.setAttribute( 'style', 'background-image: url( "' + hrefs[ i ].href + '" )' );
+                divImg.setAttribute( 'style', 'background-image: url( "' + images[ 0 ].src + '" )' );
+                //divImg.setAttribute( 'style', 'background-image: url( "' + hrefs[ i ].href + '" )' );
                 fullSize.src = hrefs[ i ].href;
                 this.images.push( new Img( divImg, fullSize ) );
                 this.images[ i ].preview.setAttribute( 'onmouseover', 'mouseIsOver(' + this.id + ');' );
@@ -53,14 +54,20 @@ class ImgCollection {
         }
         else {
             div = document.createElement( 'div' );
+            let span = document.createElement( 'span' );
+            span.innerHTML = this.size;
             div.id = 'collection_' + this.id;
             div.setAttribute( 'class', 'imgWrapper' );
             for ( let i = 0; i < this.size; i++ ) {
                 this.images[ i ].preview.style.opacity = 0;
+                this.images[ i ].preview.style.zIndex  = 1;
                 div.appendChild( this.images[i].preview );
             }
             root.appendChild( div );
+            this.images[ 0 ].preview.appendChild( span );
+            this.images[ 0 ].preview.style.zIndex  = 2;
             this.images[ 0 ].preview.style.opacity = 1;
+            //this.images[ 0 ].preview.innerHTML = this.size;
             this.images[ 0 ].preview.setAttribute( 'onmouseover', 'imgHover(' + this.id + ');' );
             this.images[ 0 ].preview.setAttribute( 'onmouseout', 'imgLeave(' + this.id + ');' );
             div.setAttribute( 'onmouseover', 'mouseIsOver(' + this.id + ');' );
@@ -70,7 +77,7 @@ class ImgCollection {
 
     close( force ) {
         if ( this.visible && !force ) {
-            return 350;
+            return 500;
         }
 
         let images = this.preview.getElementsByTagName( 'div' );
@@ -87,7 +94,8 @@ class ImgCollection {
             //images[ 0 ].style.left = '0px';
             images[ 0 ].style.width  = this.width + 'px';
             images[ 0 ].style.height = this.height + 'px';
-            images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
+            //images[ 0 ].innerHTML = this.size;
+            //images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
         }
         moveElement( images[ 0 ], 0, 0, 0, 0 );
         this.lower();
@@ -106,7 +114,7 @@ class ImgCollection {
     }
 
     upper() {
-        this.preview.style.zIndex = 2;
+        this.preview.style.zIndex = 3;
     }
 
     hover() {
@@ -121,8 +129,20 @@ class ImgCollection {
                     }
                     right -= collection.width + spacing;
                 }
+
+                // posun vpravo
+                bottom = hspace - spacing;
+                right  = -( vspace + ( collection.width + spacing * ( steps + 1 ) ) * steps );
+                for ( let i = 0; i < y && idx < images.length; i++ ) {
+                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
+                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
+                    }
+                    bottom -= collection.height + spacing;
+                }
+
+
                 // posune obrazku dolu
-                bottom = -bottom - 2 * spacing;
+                bottom = -( hspace + ( collection.height + spacing * ( steps + 1 )  ) * steps );
                 right  = vspace - spacing;
                 for ( let i = 0; i < y && idx < images.length; i++ ) {
                     if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
@@ -130,18 +150,10 @@ class ImgCollection {
                     }
                     right -= collection.width + spacing;
                 }
+
                 // posun vlevo
                 bottom = hspace - 5;
                 right  = vspace + ( collection.width + spacing * ( steps - 1 ) ) * steps;
-                for ( let i = 0; i < y && idx < images.length; i++ ) {
-                    if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
-                        moveElement( images[ idx++ ], 0, right, bottom, 0 );
-                    }
-                    bottom -= collection.height + spacing;
-                }
-                // posun vpravo
-                bottom = hspace - spacing;
-                right  = -right - 2*spacing;
                 for ( let i = 0; i < y && idx < images.length; i++ ) {
                     if ( inPage( images[ idx ], 0, right, bottom, 0 ) ) {
                         moveElement( images[ idx++ ], 0, right, bottom, 0 );
@@ -218,6 +230,9 @@ class ImgCollection {
             let x      = images.length - 1;
             // let circle = x % 4 == 0 ? x : x + 4 - ( x % 4 );
             let circle = x % 4 == 0 ? x - 4 : x - x % 4;
+            if ( circle < 4 ) {
+                circle = 4;
+            }
             let y      = circle / 4;
             let space  = ( y - 1 ) / 2;
             let spacing = 5;
@@ -233,7 +248,7 @@ class ImgCollection {
                 images[ 0 ].style.position = 'relative';
                 images[ 0 ].style.width  = collection.width + 2*vspace + 'px';
                 images[ 0 ].style.height = collection.height + 2*hspace + 'px';
-                images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
+                //images[ 0 ].style.backgroundSize = images[ 0 ].style.width + ' ' + images[ 0 ].style.height;
                 moveElement( images[ 0 ], 0, vspace -spacing , hspace - spacing, 0 );
             }
             else {
@@ -346,9 +361,9 @@ function imgHover( id ) {
 function hideAllImages( expect ) {
     for ( let i = 0; i < collections.length; i++ ) {
         if ( collections[ i ].visible ) {
-            collections[ i ].close();
+            collections[ i ].close( true );
         }
-        //collections[ i ].lower();
+        collections[ i ].lower();
     }
 }
 

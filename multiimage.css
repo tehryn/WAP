@@ -1,111 +1,132 @@
-/* Style the Image Used to Trigger the Modal */
+/* Trida kolekce obrazku */
 .multiimage {
+    /* zarovnani multiimage na stred rodicovskeho prvku */
     margin: 10 auto;
-    width: 120px;
+
+    /* Velikost nahledu obrazku. Pro zmenu velikosti je treba upravit jeste velikost v tride imgPreviw */
+    width: 130px;
+    height: 85px;
 }
 
-/*html {
-    width: 1080px;
-}*/
-
+/* Trida obrazku */
 .imgPreview {
-    display: inline-block;
+    /* Velikost nahledu obrazku. Pro zmenu velikosti je treba upravit jeste velikost v tride multiimage */
+    width: 130px;
+    height: 85px;
+
+    /* Nastaveni ohraniceni obrazku */
+    border-radius: 5px;
+    border: 5px solid black;
+
+    /* Doba animace obrazku, vse by melo mit stejnou hodnotu */
+    transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s, background-size 0.5s, opacity 0.5s;
+
+    /* Nastaveni kurzoru při najetí na obrázek */
     cursor: pointer;
-    width: 240px;
-    height: 160px;
-    transition: top 0.25s, left 0.25s, opacity 0.25s;
+
+    /* Nastaveni zobrazeni kolekce, pri zmene nasledujich hodnot hrozi poskozeni funkcionality */
+    display: inline-block;
     position: absolute;
     top: 0;
     left: 0;
-    display: block;
-    border-radius: 5px;
     z-index: 1;
-    background-size: 240px 160px;
-    border: 5px solid black;
+    background-size: cover;
     box-sizing: border-box;
 }
 
+/* Vzhled ciselneho oznaceni kolekce */
+.imgPreview span {
+    color: white;
+    padding: 2px 3px 2px 2px;
+    border-radius: 0px 0px 5px 0px;
+    font-weight: bold;
+    background-color: rgba(0,0,0,0.5);
+}
+
+/* Zelene ohraniceni po najeti mysi */
 .imgPreview:hover {
     border: 5px solid green;
 }
 
-.multiimage :first-child {
-    position: relative;
-    transition: width 0.25s, height 0.25s, top 0.25s, left 0.25s, background-size 0.25s ;
-    z-index: 2;
-}
-
+/* Relativni pozice pro div obalujici obrazky, musi byt nastaveno, protoze obrazky maji absolutni pozici */
 .imgWrapper {
     position: relative;
 }
 
-/* The Modal (background) */
+/* Seda obrazovka pri rozkliknuti obrazku */
 #modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 9999; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
+    /* Na zacatku aplikace musi byt skryt */
+    display: none;
+
+    /* Po kliknuti na obrazek se musi zobrazit s nejvetsim z-indexem */
+    z-index: 9999;
+
+    /* Mezera obrazku od horniho okraje stranky */
+    padding-top: 100px;
+
+    /* Nastaveni fixni pozice */
+    position: fixed;
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+
+    /* Zobrazeni pres celou obrazovku */
+    width: 100%;
+    height: 100%;
+
+    /* Zobrazi se scroll */
+    overflow: auto;
+
+    /* Slaba pruhlednost pozadi */
+    background-color: rgba(0,0,0,0.9);
 }
 
-/* Modal Content (Image) */
+/* Obrazek zobrazeny po kliknuti na nektery z nahledu */
 #modalImg {
+    /* Zarovnani na stred */
     margin: auto;
     display: block;
-    width: 100%;
-    max-width: 720px;
+
+    /* Zobrazit obrazek pres celou stranku, pokud je obrazek dostatecne velky */
+    /* width: 100%; */
+
+    /* Maximalni velikost omezena na 720px, lze libovone rozsirit. Pri zmene nastavit i popisek obrazku */
+    /* max-width: 720px; */
 }
 
-/* Caption of Modal Image (Image Text) - Same Width as the Image */
+/* Popisek obrazku */
 #alt {
+    /* Zarovnani na stred */
     margin: auto;
     display: block;
-    width: 100%;
-    max-width: 720px;
+
+    /* Zobrazit popisek pres celou stranku. */
+    /*width: 100%;*/
+
+    /* Maximalni velikost omezena na 720px, lze libovone rozsirit. Pri zmene nastavit i sirku obrazku */
+    /* max-width: 720px; */
+
+    /* Zarovnani textu na stred */
     text-align: center;
+
+    /* Barva popisku */
     color: #ccc;
+
+    /* Umisteni popisku */
     padding: 10px 0;
-    height: 150px;
 }
 
-/* Add Animation - Zoom in the Modal */
-#modalImg, #caption {
-    animation-name: zoom;
-    animation-duration: 0.0.5s;
-}
-
-@keyframes zoom {
-    from {transform:scale(0)}
-    to {transform:scale(1)}
-}
-
-/* The Close Button */
+/* Bily krizek v pravem hornim rohu, ktery se zobrazuje po kliknuti na nahled obrazku */
 #close {
+    /* nastaveni pozice krizku */
     position: absolute;
     top: 15px;
     right: 35px;
+
+    /* vzhled krizku */
     color: #f1f1f1;
     font-size: 40px;
     font-weight: bold;
-    transition: 0.3s;
-}
 
-#close:hover,
-#close:focus {
-  color: #bbb;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* 100% Image Width on Smaller Screens */
-@media only screen and (max-width: 700px){
-  #modalImg {
-    width: 100%;
-  }
+    /* zmena kurzoru mysi */
+    cursor: pointer;
 }
