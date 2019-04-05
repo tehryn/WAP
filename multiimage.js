@@ -297,10 +297,13 @@ class ImgCollection {
 
             // idx of current image
             let idx = 1;
-
+            let steps = 1;
             // Does images fits in document?
             if ( inPage( images[ 0 ], 0, vspace + collection.width, hspace + collection.height, 0 ) ) {
-                polygon();
+                while ( steps <= 5 && idx < images.length ) {
+                    polygon();
+                    steps++;
+                }
                 // resize first image
                 images[ 0 ].style.position = 'relative';
                 images[ 0 ].style.width  = collection.width + 2*vspace + 'px';
